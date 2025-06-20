@@ -1,0 +1,33 @@
+{
+  "name": "relaycart_dashboard",
+  "version": "1.0.0",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "device": "concurrently \"npm run frontend\" \"npm run backend\"",
+    "start": "node server.js",
+    "frontend": "cd frontend && npm start",
+    "backend": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fernandohali/RelayCart_Dashboard.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/fernandohali/RelayCart_Dashboard/issues"
+  },
+  "homepage": "https://github.com/fernandohali/RelayCart_Dashboard#readme",
+  "description": "",
+  "dependencies": {
+    "body-parser": "^2.2.0",
+    "concurrently": "^9.1.2",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "mongodb": "^6.17.0",
+    "mongoose": "^8.16.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
+}
