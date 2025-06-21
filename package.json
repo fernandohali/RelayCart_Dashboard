@@ -6,7 +6,8 @@
     "device": "concurrently \"npm run frontend\" \"npm run backend\"",
     "start": "node server.js",
     "frontend": "cd frontend && npm start",
-    "backend": "nodemon server.js"
+    "backend": "nodemon server.js",
+    "postinstall": "cd frontend && npm install && npm run build"
   },
   "repository": {
     "type": "git",
