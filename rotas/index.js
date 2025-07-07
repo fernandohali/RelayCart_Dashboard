@@ -1,10 +1,19 @@
-const router = require("express").Router(); // cria o roteador
-require("../mongoDB/mongoconn");
-const devices = require("./devices");
-router.use("/devices", devices);
+// rotas/index.js
+const router = require("express").Router();
 
+const userRoutes = require("./userRoutes");
+const carRoutes = require("./carRoutes");
+const sessionRoutes = require("./sessionRoutes");
+ // Se tiver mesmo esse
+
+// Conecta subrotas
+router.use("/users", userRoutes);
+router.use("/cars", carRoutes);
+router.use("/sessions", sessionRoutes);
+
+// Teste raiz
 router.get("/", (req, res) => {
-  res.json({ message: "Este é um acesso reservado" });
+  res.json({ message: "API funcionando 👌" });
 });
 
 module.exports = router;
