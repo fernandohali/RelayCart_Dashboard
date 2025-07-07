@@ -1,25 +1,19 @@
 const express = require("express");
-const bodyParser = require("body-parser");
-const mongoose = require("mongoose");
 require("dotenv").config();
+// Conexão MongoDB
+require("./mongoDB/mongoconn");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware
-app.use(bodyParser.json());
-
-// Conexão com MongoDB
-mongoose
-  .connect(process.env.MONGO_CONNECT)
-  .then(() => console.log("✅ Conectado ao MongoDB"))
-  .catch((err) => console.error("❌ Erro ao conectar no MongoDB:", err));
+// Middleware JSON
+app.use(express.json());
 
 // Rotas da API
 const api = require("./rotas");
 app.use("/api", api);
 
-// Produção: servir frontend React
+// Servir frontend React em produção
 if (process.env.NODE_ENV === "production") {
   const path = require("path");
   app.use(express.static(path.join(__dirname, "frontend", "build")));
@@ -29,5 +23,5 @@ if (process.env.NODE_ENV === "production") {
   });
 }
 
-// Inicia servidor
+// Iniciar servidor
 app.listen(PORT, () => console.log(`🚀 Servidor rodando na porta ${PORT}`));
