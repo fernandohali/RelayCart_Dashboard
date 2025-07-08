@@ -1,10 +1,21 @@
 const express = require("express");
 require("dotenv").config();
+const cors = require("cors"); 
+
 // Conexão MongoDB
 require("./mongoDB/mongoconn");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// ✅ Habilite o CORS aqui
+app.use(
+  cors({
+    origin: "http://localhost:5173", // Seu frontend Vite
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true, // Se usar cookies/sessões
+  })
+);
 
 // Middleware JSON
 app.use(express.json());
