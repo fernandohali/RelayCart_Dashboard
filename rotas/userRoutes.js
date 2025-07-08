@@ -2,25 +2,26 @@ const express = require("express");
 const router = express.Router();
 const User = require("../model/User");
 
-// CREATE - Criar um novo usuário
+// ✅ CREATE - Criar novo usuário
 router.post("/", async (req, res) => {
   try {
     if (!req.body.password) {
       return res.status(400).json({ error: "A senha é obrigatória" });
     }
 
-    // Cria o objeto sem o campo virtual
+    // Copia dados do body
     const userData = { ...req.body };
-    delete userData.password;
+    delete userData.password; // Remove senha do objeto principal
 
     const user = new User(userData);
 
-    // Define a senha virtual
+    // Define a senha virtual para gerar hash
     user.password = req.body.password;
 
-    // Salva ignorando validação inicial para permitir o hash antes
+    // Salva ignorando validação inicial para gerar o hash primeiro
     await user.save({ validateBeforeSave: false });
 
+    // Prepara resposta sem hash
     const userResponse = user.toObject();
     delete userResponse.passwordHash;
     delete userResponse._password;
@@ -31,7 +32,7 @@ router.post("/", async (req, res) => {
   }
 });
 
-// READ - Buscar todos os usuários
+// ✅ READ - Listar todos os usuários
 router.get("/", async (req, res) => {
   try {
     const users = await User.find().select("-passwordHash");
@@ -41,7 +42,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-// READ - Buscar um usuário por ID
+// ✅ READ - Buscar um usuário por ID
 router.get("/:id", async (req, res) => {
   try {
     const user = await User.findById(req.params.id).select("-passwordHash");
@@ -54,7 +55,7 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-// UPDATE - Atualizar um usuário
+// ✅ UPDATE - Atualizar um usuário
 router.put("/:id", async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
@@ -81,7 +82,7 @@ router.put("/:id", async (req, res) => {
   }
 });
 
-// DELETE - Deletar um usuário
+// ✅ DELETE - Deletar um usuário
 router.delete("/:id", async (req, res) => {
   try {
     const user = await User.findByIdAndDelete(req.params.id);
@@ -94,13 +95,15 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
-// LOGIN - Verificar credenciais
+// ✅ LOGIN - Verificar credenciais
 router.post("/login", async (req, res) => {
   try {
     const { username, password } = req.body;
 
     if (!username || !password) {
-      return res.status(400).json({ error: "Username e senha são obrigatórios" });
+      return res
+        .status(400)
+        .json({ error: "Username e senha são obrigatórios" });
     }
 
     const user = await User.findOne({ username });
@@ -116,7 +119,11 @@ router.post("/login", async (req, res) => {
     const userResponse = user.toObject();
     delete userResponse.passwordHash;
 
-    res.json({ message: "Login realizado com sucesso", user: userResponse });
+    res.json({
+      message: "Login realizado com sucesso",
+      user: userResponse,
+      token: "mock-token",
+    });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
