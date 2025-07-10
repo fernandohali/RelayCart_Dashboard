@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const User = require("../model/User");
+const { generateToken } = require("../middleware/auth");
 
 // ✅ CREATE - Criar novo usuário
 router.post("/", async (req, res) => {
@@ -119,10 +120,13 @@ router.post("/login", async (req, res) => {
     const userResponse = user.toObject();
     delete userResponse.passwordHash;
 
+    // Gerar token JWT real
+    const token = generateToken(user._id);
+
     res.json({
       message: "Login realizado com sucesso",
       user: userResponse,
-      token: "mock-token",
+      token: token,
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
