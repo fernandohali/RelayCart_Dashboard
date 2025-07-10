@@ -1,9 +1,14 @@
 const express = require("express");
 const router = express.Router();
 const Car = require("../model/Car");
+const {
+  authenticateToken,
+  isAdmin,
+  isAdminOrOperator,
+} = require("../middleware/auth");
 
-// CREATE - Criar um novo carro
-router.post("/", async (req, res) => {
+// ✅ CREATE - Criar novo carro (apenas admin)
+router.post("/", authenticateToken, isAdmin, async (req, res) => {
   try {
     const car = new Car(req.body);
     await car.save();
@@ -13,8 +18,8 @@ router.post("/", async (req, res) => {
   }
 });
 
-// READ - Buscar todos os carros
-router.get("/", async (req, res) => {
+// ✅ READ - Listar todos os carros (admin e operador)
+router.get("/", authenticateToken, isAdminOrOperator, async (req, res) => {
   try {
     const cars = await Car.find();
     res.json(cars);
@@ -23,21 +28,26 @@ router.get("/", async (req, res) => {
   }
 });
 
-// READ - Buscar um carro por ID
-router.get("/:carId", async (req, res) => {
-  try {
-    const car = await Car.findOne({ carId: req.params.carId });
-    if (!car) {
-      return res.status(404).json({ error: "Carro não encontrado" });
+// ✅ READ - Buscar carro por ID (admin e operador)
+router.get(
+  "/:carId",
+  authenticateToken,
+  isAdminOrOperator,
+  async (req, res) => {
+    try {
+      const car = await Car.findOne({ carId: req.params.carId });
+      if (!car) {
+        return res.status(404).json({ error: "Carro não encontrado" });
+      }
+      res.json(car);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
     }
-    res.json(car);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
   }
-});
+);
 
-// UPDATE - Atualizar um carro
-router.put("/:carId", async (req, res) => {
+// ✅ UPDATE - Atualizar carro (apenas admin)
+router.put("/:carId", authenticateToken, isAdmin, async (req, res) => {
   try {
     const car = await Car.findOneAndUpdate(
       { carId: req.params.carId },
@@ -53,8 +63,8 @@ router.put("/:carId", async (req, res) => {
   }
 });
 
-// DELETE - Deletar um carro
-router.delete("/:carId", async (req, res) => {
+// ✅ DELETE - Deletar carro (apenas admin)
+router.delete("/:carId", authenticateToken, isAdmin, async (req, res) => {
   try {
     const car = await Car.findOneAndDelete({ carId: req.params.carId });
     if (!car) {
