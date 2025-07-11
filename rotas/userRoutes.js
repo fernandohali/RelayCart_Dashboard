@@ -1,10 +1,14 @@
 const express = require("express");
 const router = express.Router();
 const User = require("../model/User");
-const { generateToken } = require("../middleware/auth");
+const {
+  generateToken,
+  authenticateToken,
+  isAdmin,
+} = require("../middleware/auth");
 
-// ✅ CREATE - Criar novo usuário
-router.post("/", async (req, res) => {
+// ✅ CREATE - Criar novo usuário (apenas admin)
+router.post("/", authenticateToken, isAdmin, async (req, res) => {
   try {
     if (!req.body.password) {
       return res.status(400).json({ error: "A senha é obrigatória" });
@@ -33,8 +37,8 @@ router.post("/", async (req, res) => {
   }
 });
 
-// ✅ READ - Listar todos os usuários
-router.get("/", async (req, res) => {
+// ✅ READ - Listar todos os usuários (apenas admin)
+router.get("/", authenticateToken, isAdmin, async (req, res) => {
   try {
     const users = await User.find().select("-passwordHash");
     res.json(users);
@@ -43,8 +47,8 @@ router.get("/", async (req, res) => {
   }
 });
 
-// ✅ READ - Buscar um usuário por ID
-router.get("/:id", async (req, res) => {
+// ✅ READ - Buscar um usuário por ID (apenas admin)
+router.get("/:id", authenticateToken, isAdmin, async (req, res) => {
   try {
     const user = await User.findById(req.params.id).select("-passwordHash");
     if (!user) {
@@ -56,8 +60,8 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-// ✅ UPDATE - Atualizar um usuário
-router.put("/:id", async (req, res) => {
+// ✅ UPDATE - Atualizar um usuário (apenas admin)
+router.put("/:id", authenticateToken, isAdmin, async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
     if (!user) {
@@ -83,8 +87,8 @@ router.put("/:id", async (req, res) => {
   }
 });
 
-// ✅ DELETE - Deletar um usuário
-router.delete("/:id", async (req, res) => {
+// ✅ DELETE - Deletar um usuário (apenas admin)
+router.delete("/:id", authenticateToken, isAdmin, async (req, res) => {
   try {
     const user = await User.findByIdAndDelete(req.params.id);
     if (!user) {

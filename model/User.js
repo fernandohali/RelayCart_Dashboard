@@ -30,7 +30,9 @@ const userSchema = new mongoose.Schema(
     // Função do usuário: admin ou operador
     role: {
       type: String,
-      enum: ["admin", "operator"], // só pode ser um desses valores
+      // O admin é o dono do sistema, gestor é quem controla os carros
+      // e o operador é quem controla o estado dos carros
+      enum: ["admin", "gestor", "operator"], // só pode ser um desses valores
       default: "operator",
     },
   },
