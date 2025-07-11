@@ -42,18 +42,44 @@ function isAdmin(req, res, next) {
   next();
 }
 
-// Middleware para verificar se é admin ou operador
-function isAdminOrOperator(req, res, next) {
+// Middleware para verificar se é gestor
+function isGestor(req, res, next) {
   if (!req.user) {
     return res.status(401).json({ error: "Autenticação requerida" });
   }
 
-  if (req.user.role !== "admin" && req.user.role !== "operator") {
+  if (req.user.role !== "gestor") {
     return res
       .status(403)
-      .json({
-        error: "Acesso permitido apenas para administradores e operadores",
-      });
+      .json({ error: "Acesso permitido apenas para gestores" });
+  }
+  next();
+}
+
+// Middleware para verificar se é gestor ou operador (para acesso aos carros)
+function isGestorOrOperator(req, res, next) {
+  if (!req.user) {
+    return res.status(401).json({ error: "Autenticação requerida" });
+  }
+
+  if (req.user.role !== "gestor" && req.user.role !== "operator") {
+    return res.status(403).json({
+      error: "Acesso permitido apenas para gestores e operadores",
+    });
+  }
+  next();
+}
+
+// Middleware para verificar se é operador
+function isOperator(req, res, next) {
+  if (!req.user) {
+    return res.status(401).json({ error: "Autenticação requerida" });
+  }
+
+  if (req.user.role !== "operator") {
+    return res
+      .status(403)
+      .json({ error: "Acesso permitido apenas para operadores" });
   }
   next();
 }
@@ -66,7 +92,9 @@ function generateToken(userId) {
 module.exports = {
   authenticateToken,
   isAdmin,
-  isAdminOrOperator,
+  isGestor,
+  isGestorOrOperator,
+  isOperator,
   generateToken,
   JWT_SECRET,
 };
