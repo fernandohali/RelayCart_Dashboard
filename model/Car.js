@@ -23,6 +23,12 @@ const carSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+    
+    // Vai ser as imagens do carro
+    images: {
+      type: [String],
+      required: true,
+    },
 
     // Estado do carro: pronto, em movimento ou parado
     state: {
